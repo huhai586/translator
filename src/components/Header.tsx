@@ -12,7 +12,6 @@ import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import SettingsIcon from '@mui/icons-material/Settings';
 import InfoIcon from '@mui/icons-material/Info';
-import TranslateIcon from '@mui/icons-material/Translate';
 
 interface HeaderProps {
   darkMode: boolean;
@@ -36,16 +35,17 @@ const Header: React.FC<HeaderProps> = ({
       elevation={0}
       sx={{ 
         borderBottom: `1px solid ${theme.palette.divider}`,
-        backgroundColor: theme.palette.background.paper
+        backgroundColor: theme.palette.background.paper,
+        '-webkit-app-region': 'drag',
+        pt: '20px'
       }}
     >
-      <Toolbar>
-        <TranslateIcon color="primary" sx={{ mr: 1 }} />
-        <Typography variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
+      <Toolbar sx={{ '-webkit-app-region': 'drag' }}>
+        <Typography variant="h6" color="inherit" noWrap sx={{ flexGrow: 1, '-webkit-app-region': 'drag' }}>
           CrossLingua
         </Typography>
         
-        <Box>
+        <Box sx={{ '-webkit-app-region': 'no-drag' }}>
           <Tooltip title={darkMode ? "Switch to light mode" : "Switch to dark mode"}>
             <IconButton onClick={onToggleDarkMode} color="inherit">
               {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}

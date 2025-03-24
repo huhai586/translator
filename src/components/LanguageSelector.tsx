@@ -12,7 +12,6 @@ import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 
 // 支持的语言列表
 const LANGUAGES = {
-  'auto': '检测语言',
   'zh': '中文 (简体)',
   'en': '英语',
   'de': '德语',
@@ -25,8 +24,6 @@ interface LanguageSelectorProps {
   onSourceLanguageChange: (lang: string) => void;
   onTargetLanguageChange: (lang: string) => void;
   onSwapLanguages: () => void;
-  disableSourceAuto?: boolean;
-  disableTargetAuto?: boolean;
 }
 
 const LanguageSelector: React.FC<LanguageSelectorProps> = ({
@@ -34,9 +31,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   targetLanguage,
   onSourceLanguageChange,
   onTargetLanguageChange,
-  onSwapLanguages,
-  disableSourceAuto = false,
-  disableTargetAuto = true
+  onSwapLanguages
 }) => {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === 'dark';
@@ -101,9 +96,6 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
           }
         }}
       >
-        {!disableSourceAuto && (
-          <MenuItem value="auto">{LANGUAGES.auto}</MenuItem>
-        )}
         <MenuItem value="zh">{LANGUAGES.zh}</MenuItem>
         <MenuItem value="en">{LANGUAGES.en}</MenuItem>
         <MenuItem value="de">{LANGUAGES.de}</MenuItem>
@@ -146,9 +138,6 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
           }
         }}
       >
-        {!disableTargetAuto && (
-          <MenuItem value="auto">{LANGUAGES.auto}</MenuItem>
-        )}
         <MenuItem value="zh">{LANGUAGES.zh}</MenuItem>
         <MenuItem value="en">{LANGUAGES.en}</MenuItem>
         <MenuItem value="de">{LANGUAGES.de}</MenuItem>

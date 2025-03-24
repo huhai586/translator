@@ -10,7 +10,7 @@
     "dev:electron": "wait-on http://localhost:3002 && electron .",
     "build": "npm run build:react && npm run build:electron",
     "build:react": "npx webpack --mode production",
-    "build:electron": "electron-builder build --win",
+    "build:electron": "electron-builder build --mac",
     "postinstall": "electron-builder install-app-deps"
   },
   "keywords": [

@@ -2,8 +2,6 @@ import axios from 'axios';
 
 interface TranslationResult {
   translatedText: string;
-  sourceLang?: string;
-  detectedLang?: string;
   provider: 'openai' | 'gemini';
   responseTime: number;
 }
@@ -12,7 +10,7 @@ class TranslationService {
   private openaiApiKey: string = '';
   private geminiApiKey: string = '';
   private preferredModel: string = 'gpt-3.5-turbo';
-  private sourceLanguage: string = 'auto';
+  private sourceLanguage: string = 'zh';
   private targetLanguage: string = 'en';
   private lastProvider: 'openai' | 'gemini' | null = null;
   private responseTimesOpenAI: number[] = [];
@@ -24,7 +22,7 @@ class TranslationService {
       this.openaiApiKey = await window.electron.getSetting('openaiApiKey') || '';
       this.geminiApiKey = await window.electron.getSetting('geminiApiKey') || '';
       this.preferredModel = await window.electron.getSetting('preferredModel') || 'gpt-3.5-turbo';
-      this.sourceLanguage = await window.electron.getSetting('sourceLanguage') || 'auto';
+      this.sourceLanguage = await window.electron.getSetting('sourceLanguage') || 'zh';
       this.targetLanguage = await window.electron.getSetting('targetLanguage') || 'en';
       
       console.log('TranslationService: Settings loaded', { 
@@ -270,45 +268,52 @@ class TranslationService {
     }
   }
 
-  // Main translation function with fallback
+  // 翻译文本
   async translate(text: string): Promise<TranslationResult> {
-    // 每次翻译前重新加载设置
-    await this.loadSettings();
-    
-    if (!this.canTranslate()) {
-      throw new Error('No translation API keys configured.');
-    }
-    
+    const startTime = Date.now();
+
     try {
-      // Select the provider to use
-      const provider = this.selectProvider();
+      // 每次翻译前重新加载设置
+      await this.loadSettings();
       
-      // Try with selected provider
+      if (!this.canTranslate()) {
+        throw new Error('No translation API keys configured.');
+      }
+      
       try {
-        if (provider === 'openai') {
-          return await this.translateWithOpenAI(text);
-        } else {
-          return await this.translateWithGemini(text);
-        }
-      } catch (error) {
-        console.error(`Error with ${provider} translation, trying fallback:`, error);
+        // Select the provider to use
+        const provider = this.selectProvider();
         
-        // Try with the other provider if available
-        const fallbackProviders = this.getAvailableProviders().filter(p => p !== provider);
-        
-        if (fallbackProviders.length > 0) {
-          if (fallbackProviders[0] === 'openai') {
+        // Try with selected provider
+        try {
+          if (provider === 'openai') {
             return await this.translateWithOpenAI(text);
           } else {
             return await this.translateWithGemini(text);
           }
-        } else {
-          throw error; // No fallback available
+        } catch (error) {
+          console.error(`Error with ${provider} translation, trying fallback:`, error);
+          
+          // Try with the other provider if available
+          const fallbackProviders = this.getAvailableProviders().filter(p => p !== provider);
+          
+          if (fallbackProviders.length > 0) {
+            if (fallbackProviders[0] === 'openai') {
+              return await this.translateWithOpenAI(text);
+            } else {
+              return await this.translateWithGemini(text);
+            }
+          } else {
+            throw error; // No fallback available
+          }
         }
+      } catch (error) {
+        console.error('Translation failed with all providers:', error);
+        throw new Error('Translation failed. Please check your API keys and connection.');
       }
     } catch (error) {
-      console.error('Translation failed with all providers:', error);
-      throw new Error('Translation failed. Please check your API keys and connection.');
+      console.error('Translation error:', error);
+      throw error;
     }
   }
 }

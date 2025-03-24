@@ -40,7 +40,7 @@ const App: React.FC = () => {
   const [isAboutOpen, setIsAboutOpen] = useState<boolean>(false);
   
   // 语言设置
-  const [sourceLanguage, setSourceLanguage] = useState<string>('auto');
+  const [sourceLanguage, setSourceLanguage] = useState<string>('zh');
   const [targetLanguage, setTargetLanguage] = useState<string>('en');
   
   const [notification, setNotification] = useState<{
@@ -162,7 +162,7 @@ const App: React.FC = () => {
         
         // 加载语言设置
         const savedSourceLanguage = await window.electron.getSetting('sourceLanguage');
-        if (savedSourceLanguage) {
+        if (savedSourceLanguage && savedSourceLanguage !== 'auto') {
           setSourceLanguage(savedSourceLanguage);
         }
         
